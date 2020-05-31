@@ -10,21 +10,13 @@ vector<int> isDest(10, 0);
 int currtime = 0;
 int currfloor = 0;
 
-//struct comp
-//{
-//	bool operator()(vector<int> v1, vector<int> v2)
-//	{
-//		return abs(v1[0] - currtime) < abs(v2[0] - currtime);
-//	}
-//};
-
-//struct comp
-//{
-//	bool operator()(vector<int> v1, vector<int> v2)
-//	{
-//		return abs(v1[1] - currfloor) < abs(v2[1] - currfloor);
-//	}
-//};
+struct comp
+{
+	bool operator()(vector<int> v1, vector<int> v2)
+	{
+		return abs(v1[0] - currtime) < abs(v2[0] - currtime);
+	}
+};
 
 void stay(int floor)
 {
@@ -181,55 +173,62 @@ int main()
 		all_info.push_back(info);
 	}
 	
-	for(int i = 0; i < queries; i++)
-	{		
-//		sort(all_info.begin(), all_info.end(), comp());
-		while(!ready.empty())
-		{
-			vector<int> ele = ready.front();
-			ready.pop();
-			if(isDest[ele[2]] == 0)
-				continue;
-			else
+	while(completed.size() != queries)
+	{
+		for(int i = 0; i < queries; i++)
+		{		
+			
+			while(!ready.empty())
 			{
-				move(currfloor, ele[2], currtime);
-				
-				currfloor = ele[2];
-				
-				isDest[ele[2]] = 0;
+				vector<int> ele = ready.front();
+				ready.pop();
+				if(isDest[ele[2]] == 0)
+					continue;
+				else
+				{
+					move(currfloor, ele[2], currtime);
+					
+					currfloor = ele[2];
+					
+					isDest[ele[2]] = 0;
+				}
 			}
-		}
-		
-		while(currtime < all_info[i][0])
-		{
-			stay(currfloor);
-			currtime++;
-		}
-		if(currtime >= all_info[i][0])
-		{
-			if(completed.find(all_info[i]) == completed.end())
+			sort(all_info.begin(), all_info.end(), comp());
+			while(currtime < all_info[i][0])
 			{
-				completed.insert(all_info[i]);
-				
-				move(currfloor, all_info[i][1], currtime);
-				
-				currfloor = all_info[i][1];
-				open(currfloor);
+				stay(currfloor);
 				currtime++;
-				close(currfloor);
-				currtime++;	
-
-				move(all_info[i][1], all_info[i][2], currtime);
-				currfloor = all_info[i][2];
-				open(currfloor);
-				currtime++;
-				close(currfloor);
-				currtime++;	
 			}
-		}
+			if(currtime >= all_info[i][0])
+			{
+				if(completed.find(all_info[i]) == completed.end())
+				{
+					completed.insert(all_info[i]);
+					
+					move(currfloor, all_info[i][1], currtime);
+					
+					currfloor = all_info[i][1];
+					open(currfloor);
+					currtime++;
+					close(currfloor);
+					currtime++;	
+	
+					move(all_info[i][1], all_info[i][2], currtime);
+					currfloor = all_info[i][2];
+					open(currfloor);
+					currtime++;
+					close(currfloor);
+					currtime++;	
+				}
+			}
+		}	
 	}
+	
+	
 }
 
+
+// TestCases
 
 /*
 6
@@ -277,5 +276,14 @@ int main()
 3 5 0
 4 9 4
 5 3 6
+*/
+
+/*
+5
+1 3 6
+2 5 1
+3 9 0
+4 6 8
+5 1 4
 */
 
